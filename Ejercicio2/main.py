@@ -1,16 +1,37 @@
-# This is a sample Python script.
+import pandas as pd
+import sqlite3
+import json
 
-# Press Mayús+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+con = sqlite3.connect('ejercicio1.db')
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+def create():
+    cursorObj = con.cursor()
+    cursorObj.execute("DROP TABLE IF EXISTS usuarios")
+    cursorObj.execute("DROP TABLE IF EXISTS fechas")
+    cursorObj.execute("DROP TABLE IF EXISTS ips")
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    cursorObj.execute("CREATE TABLE usuarios (username text, telefono integer, contrasena text, provincia text, "
+                      "permisos integer, emails_total integer, emails_phising integer, emails_clicados integer, constraint PK_usuarios primary key (username)) ")
+    cursorObj.execute(
+        "CREATE TABLE fechas (username text, fecha text, constraint PK_fechas primary key (username,fecha), constraint FK_fechas_usuarios foreign key (username) references usuarios(username))")
+    cursorObj.execute(
+        "CREATE TABLE ips (username text, ip text, constraint PK_ips primary key (username,ip), constraint FK_ips_usuarios foreign key (username) references usuarios(username))")
+    con.commit()
+
+
+def instantiate():
+    create()
+    cursorObj = con.cursor()
+    with open("users.json", "r") as file:
+        lines = json.load(file)
+
+        for user in lines["usuarios"]:
+            for usernames in user.keys():
+                query = "INSERT INTO usuarios (username) VALUES ({})".format(usernames)
+
+                cursorObj.execute(query)
+    con.commit()
+
+
+instantiate()
