@@ -1,6 +1,7 @@
 import pandas as pd
 import sqlite3
 import json
+import numpy as np
 
 con = sqlite3.connect('ejercicio1.db')
 
@@ -27,10 +28,48 @@ def instantiate():
         lines = json.load(file)
 
         for user in lines["usuarios"]:
-            for usernames in user.keys():
-                query = "INSERT INTO usuarios (username) VALUES ({})".format(usernames)
-
+            for username in user.keys():
+                sum += 9
+                query = "INSERT INTO usuarios (username) VALUES (\'{}\')".format(username)
                 cursorObj.execute(query)
+                telefono = user[username]["telefono"]
+                if telefono != 'None':
+                    query = "UPDATE usuarios SET telefono = {} WHERE username = \'{}\'".format(telefono, username)
+                    cursorObj.execute(query)
+                else:
+                    sum -= 1
+                query = "UPDATE usuarios SET contrasena = \'{}\' WHERE username = \'{}\'".format(user[username]["contrasena"], username)
+                cursorObj.execute(query)
+                provincia = user[username]["provincia"]
+                if provincia != 'None':
+                    query = "UPDATE usuarios SET provincia = \'{}\' WHERE username = \'{}\'".format(provincia, username)
+                    cursorObj.execute(query)
+                else:
+                    sum -= 1
+                permisos = user[username]["permisos"]
+                query = "UPDATE usuarios SET permisos = {} WHERE username = \'{}\'".format(permisos, username)
+                cursorObj.execute(query)
+                emails_total = user[username]["emails"]["total"]
+                query = "UPDATE usuarios SET emails_total = {} WHERE username = \'{}\'".format(emails_total, username)
+                cursorObj.execute(query)
+                emails_phishing = user[username]["emails"]["phishing"]
+                query = "UPDATE usuarios SET emails_phishing = {} WHERE username = \'{}\'".format(emails_phishing, username)
+                cursorObj.execute(query)
+                emails_clicados = user[username]["emails"]["cliclados"]
+                query = "UPDATE usuarios SET emails_clicados = {} WHERE username = \'{}\'".format(emails_clicados, username)
+                cursorObj.execute(query)
+                test = []
+                for fecha in user[username]["fechas"]:
+                    if fecha not in test:
+                        query = "INSERT INTO fechas (username,fecha) VALUES (\'{}\',\'{}\')".format(username, fecha)
+                        cursorObj.execute(query)
+                        test.append(fecha)
+                test = []
+                for ip in user[username]["ips"]:
+                    if ip not in test:
+                        query = "INSERT INTO ips (username,ip) VALUES (\'{}\',\'{}\')".format(username, ip)
+                        cursorObj.execute(query)
+                        test.append(ip)
     con.commit()
 
 
