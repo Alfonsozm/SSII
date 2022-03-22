@@ -75,11 +75,15 @@ def instantiate():
                         cursorObj.execute(query)
                         test.append(fecha)
                 test = []
-                for ip in user[username]["ips"]:
-                    if ip not in test:
-                        query = "INSERT INTO ips (username,ip) VALUES (\'{}\',\'{}\')".format(username, ip)
-                        cursorObj.execute(query)
-                        test.append(ip)
+                if user[username]["ips"] == "None":
+                    query = "INSERT INTO ips (username,ip) VALUES (\'{}\',Null)".format(username, ip)
+                    cursorObj.execute(query)
+                else:
+                    for ip in user[username]["ips"]:
+                        if ip not in test:
+                            query = "INSERT INTO ips (username,ip) VALUES (\'{}\',\'{}\')".format(username, ip)
+                            cursorObj.execute(query)
+                            test.append(ip)
     con.commit()
     return sum
 
@@ -106,10 +110,10 @@ def dataframe_users():
     }
 
     dataframe = pd.DataFrame(data)
-    print(dataframe)
+    return dataframe
 
 
-def media_fechas() -> float:
+def media_fechas(dataframe) -> float:
     """Calcula la media del total de fechas que se ha iniciado sesión."""
     sum = 0
     for num in cursorObj.execute("SELECT COUNT(fecha) FROM fechas group by username").fetchall():
@@ -186,7 +190,9 @@ def min_emails_totales() -> int:
 
 
 instantiate()
-print("Media del total de fechas que se ha iniciado sesión:\n", media_fechas())
+dataframe = dataframe_users()
+print(dataframe)
+print("Media del total de fechas que se ha iniciado sesión:\n", media_fechas(dataframe))
 print("Desviación estándar del total de fechas que se ha iniciado sesión:\n", desviacion_fechas())
 print("Media del total de IPs que se han detectado:\n", media_ips())
 print("Desviación estándar del total de IPs que se han detectado:\n", desviacion_ips())
@@ -197,4 +203,3 @@ print("Valor máximo del total de fechas que se ha iniciado sesión:\n", max_fec
 print("Valor mínimo del número de emails recibidos:\n", min_emails_totales())
 print("Valor máximo del número de emails recibidos:\n", max_emails_totales())
 
-dataframe_users()
