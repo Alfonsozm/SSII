@@ -93,6 +93,7 @@ def dataframe_v2():
     df["IPs"] = pd.read_sql_query("SELECT COUNT(ip) from ips group by username", con)
     return df
 
+
 def media_fechas() -> float:
     """Calcula la media del total de fechas que se ha iniciado sesión."""
     sum = 0
