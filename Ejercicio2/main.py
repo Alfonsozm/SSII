@@ -89,99 +89,80 @@ def instantiate():
 
 
 def dataframe_v2():
-    df = pd.read_sql_query("SELECT username, telefono, emails_total, provincia FROM usuarios group by username", con)
+    df = pd.read_sql_query("SELECT telefono, emails_total, provincia FROM usuarios group by username", con)
     df["IPs"] = pd.read_sql_query("SELECT COUNT(ip) from ips group by username", con)
+    df["Fechas"] = pd.read_sql_query("SELECT COUNT(fecha) FROM fechas group by username", con)
     return df
 
 
-def media_fechas() -> float:
+def valores_missing(dataframe):
+    pass
+
+
+def media_fechas(dataframe) -> float:
     """Calcula la media del total de fechas que se ha iniciado sesión."""
-    sum = 0
-    for num in cursorObj.execute("SELECT COUNT(fecha) FROM fechas group by username").fetchall():
-        sum += num[0]
-    return sum / cursorObj.execute("SELECT COUNT(DISTINCT(username)) FROM fechas").fetchone()[0]
+    # x / len(dataframe)
+    return dataframe["Fechas"].sum() / len(dataframe)
 
 
-def desviacion_fechas() -> float:
+def desviacion_fechas(dataframe) -> float:
     """Calcula la desviación estándar del total de fechas que se ha iniciado sesión."""
-    aux = []
-    for num in cursorObj.execute("SELECT COUNT(fecha) FROM fechas group by username").fetchall():
-        aux.append(num[0])
-    return float(np.std(aux))
+    # np.std(arr)
+    return float(np.std(dataframe["Fechas"].to_numpy()))
 
 
-def max_fechas() -> int:
+def max_fechas(dataframe) -> int:
     """Calcula el valor máximo del total de fechas que se ha iniciado sesión"""
-    aux = 0
-    for num in cursorObj.execute("SELECT COUNT(fecha) FROM fechas group by username").fetchall():
-        if aux < num[0]:
-            aux = num[0]
-    return aux
+    return dataframe["Fechas"].max()
 
 
-def min_fechas() -> int:
+def min_fechas(dataframe) -> int:
     """Calcula el valor mínimo del total de fechas que se ha iniciado sesión"""
-    aux = float("inf")
-    for num in cursorObj.execute("SELECT COUNT(fecha) FROM fechas group by username").fetchall():
-        if aux > num[0]:
-            aux = num[0]
-    return aux
+    return dataframe["Fechas"].min()
 
 
-def media_ips() -> float:
+def media_ips(dataframe) -> float:
     """Calcula la media del total de IPs que se han detectado"""
-    sum = 0
-    for num in cursorObj.execute("SELECT COUNT(ip) FROM ips group by username").fetchall():
-        sum += num[0]
-    return sum / cursorObj.execute("SELECT COUNT(DISTINCT(username)) FROM ips").fetchone()[0]
+    return dataframe["IPs"].sum() / len(dataframe)
 
 
-def desviacion_ips() -> float:
+def desviacion_ips(dataframe) -> float:
     """Calcula la desviación estándar del total de IPs que se han detectado"""
-    aux = []
-    for num in cursorObj.execute("SELECT COUNT(ip) FROM ips group by username").fetchall():
-        aux.append(num[0])
-    return float(np.std(aux))
+    return float(np.std(dataframe["IPs"].to_numpy()))
 
 
-def media_emails_totales() -> float:
+def media_emails_totales(dataframe) -> float:
     """Calcula la media del número de emails recibidos"""
-    sum = 0
-    for num in cursorObj.execute("SELECT emails_total FROM usuarios").fetchall():
-        sum += num[0]
-    return sum / cursorObj.execute("SELECT COUNT(username) FROM usuarios").fetchone()[0]
+    return dataframe["emails_total"].sum() / len(dataframe)
 
 
-def desviacion_emails_totales() -> float:
+def desviacion_emails_totales(dataframe) -> float:
     """Calcula la desviación estándar del número de emails recibidos"""
-    aux = []
-    for num in cursorObj.execute("SELECT emails_total FROM usuarios").fetchall():
-        aux.append(num[0])
-    return float(np.std(aux))
+    return float(np.std(dataframe["emails_total"].to_numpy()))
 
 
-def max_emails_totales() -> int:
+def max_emails_totales(dataframe) -> int:
     """Calcula el valor máximo del número de emails recibidos"""
-    return cursorObj.execute("SELECT MAX(emails_total) FROM usuarios").fetchone()[0]
+    return dataframe["emails_total"].max()
 
 
-def min_emails_totales() -> int:
+def min_emails_totales(dataframe) -> int:
     """Calcula el valor mínimo del número de emails recibidos"""
-    return cursorObj.execute("SELECT MIN(emails_total) FROM usuarios").fetchone()[0]
+    return dataframe["emails_total"].min()
 
 
 instantiate()
 
-#dataframe = dataframe_users()
-dataframe_v2()
-print("Media del total de fechas que se ha iniciado sesión:\n", media_fechas())
-print("Desviación estándar del total de fechas que se ha iniciado sesión:\n", desviacion_fechas())
-print("Media del total de IPs que se han detectado:\n", media_ips())
-print("Desviación estándar del total de IPs que se han detectado:\n", desviacion_ips())
-print("Media del número de emails recibidos:\n", media_emails_totales())
-print("Desviación estándar del número de emails recibidos:\n", desviacion_emails_totales())
-print("Valor mínimo del total de fechas que se ha iniciado sesión:\n", min_fechas())
-print("Valor máximo del total de fechas que se ha iniciado sesión:\n", max_fechas())
-print("Valor mínimo del número de emails recibidos:\n", min_emails_totales())
-print("Valor máximo del número de emails recibidos:\n", max_emails_totales())
+# dataframe = dataframe_users()
+df = dataframe_v2()
+print("Media del total de fechas que se ha iniciado sesión:\n", media_fechas(df))
+print("Desviación estándar del total de fechas que se ha iniciado sesión:\n", desviacion_fechas(df))
+print("Media del total de IPs que se han detectado:\n", media_ips(df))
+print("Desviación estándar del total de IPs que se han detectado:\n", desviacion_ips(df))
+print("Media del número de emails recibidos:\n", media_emails_totales(df))
+print("Desviación estándar del número de emails recibidos:\n", desviacion_emails_totales(df))
+print("Valor mínimo del total de fechas que se ha iniciado sesión:\n", min_fechas(df))
+print("Valor máximo del total de fechas que se ha iniciado sesión:\n", max_fechas(df))
+print("Valor mínimo del número de emails recibidos:\n", min_emails_totales(df))
+print("Valor máximo del número de emails recibidos:\n", max_emails_totales(df))
 
