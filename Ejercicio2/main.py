@@ -84,6 +84,31 @@ def instantiate():
     return sum
 
 
+def dataframe_users():
+    users = []
+    fechas = []
+    emails = []
+    ips = []
+    for user in cursorObj.execute("SELECT username FROM usuarios").fetchall():
+        users.append(user[0])
+    for num in cursorObj.execute("SELECT COUNT(fecha) FROM fechas group by username").fetchall():
+        fechas.append(num[0])
+    for num in cursorObj.execute("SELECT emails_total FROM usuarios group by username").fetchall():
+        emails.append(num[0])
+    for num in cursorObj.execute("SELECT COUNT(ip) FROM ips group by username").fetchall():
+        ips.append(num[0])
+    data = {
+
+        "Usuario": users,
+        "Fechas": fechas,
+        "Emails": emails,
+        "IPs": ips
+    }
+
+    dataframe = pd.DataFrame(data)
+    print(dataframe)
+
+
 def media_fechas() -> float:
     """Calcula la media del total de fechas que se ha iniciado sesión."""
     sum = 0
@@ -171,3 +196,5 @@ print("Valor mínimo del total de fechas que se ha iniciado sesión:\n", min_fec
 print("Valor máximo del total de fechas que se ha iniciado sesión:\n", max_fechas())
 print("Valor mínimo del número de emails recibidos:\n", min_emails_totales())
 print("Valor máximo del número de emails recibidos:\n", max_emails_totales())
+
+dataframe_users()
