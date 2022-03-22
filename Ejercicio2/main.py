@@ -93,8 +93,14 @@ def dataframe_users():
     fechas = []
     emails = []
     ips = []
+    telefonos = []
     for user in cursorObj.execute("SELECT username FROM usuarios").fetchall():
         users.append(user[0])
+    for tel in cursorObj.execute("SELECT telefono FROM usuarios group by username").fetchall():
+        if tel[0] is not None:
+            telefonos.append(tel[0])
+        else:
+            telefonos.append(0)
     for num in cursorObj.execute("SELECT COUNT(fecha) FROM fechas group by username").fetchall():
         fechas.append(num[0])
     for num in cursorObj.execute("SELECT emails_total FROM usuarios group by username").fetchall():
@@ -104,6 +110,7 @@ def dataframe_users():
     data = {
 
         "Usuario": users,
+        "Telefono": telefonos,
         "Fechas": fechas,
         "Emails": emails,
         "IPs": ips
