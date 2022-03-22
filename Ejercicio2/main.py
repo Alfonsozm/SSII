@@ -2,6 +2,7 @@ import pandas as pd
 import sqlite3
 import json
 import numpy as np
+import math
 
 con = sqlite3.connect('ejercicio1.db')
 cursorObj = con.cursor()
@@ -89,15 +90,25 @@ def instantiate():
 
 
 def dataframe_v2():
-    df = pd.read_sql_query("SELECT telefono, emails_total, provincia FROM usuarios group by username", con)
+    df = pd.read_sql_query("SELECT IFNULL(telefono, 'NULL') telefono, emails_total, IFNULL(provincia, 'NULL') provincia FROM usuarios group by username", con)
     df["IPs"] = pd.read_sql_query("SELECT COUNT(ip) from ips group by username", con)
     df["Fechas"] = pd.read_sql_query("SELECT COUNT(fecha) FROM fechas group by username", con)
     return df
 
 
 def valores_missing(dataframe):
-    pass
+    missing = 0
+    #row["emails_total"], row["provincia"], row["IPs"], row["Fechas"])
+    for index, row in dataframe.iterrows():
+        if row["telefono"] == "NULL":
+            missing += 1
+        if row["provincia"] == "NULL":
+            missing += 1
+        if row["IPs"] == 0:
+            missing += 1
 
+
+    return missing
 
 def media_fechas(dataframe) -> float:
     """Calcula la media del total de fechas que se ha iniciado sesión."""
@@ -155,6 +166,8 @@ instantiate()
 
 # dataframe = dataframe_users()
 df = dataframe_v2()
+print(df)
+print("Valores missing:\n", valores_missing(df))
 print("Media del total de fechas que se ha iniciado sesión:\n", media_fechas(df))
 print("Desviación estándar del total de fechas que se ha iniciado sesión:\n", desviacion_fechas(df))
 print("Media del total de IPs que se han detectado:\n", media_ips(df))
