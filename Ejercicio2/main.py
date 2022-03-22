@@ -88,39 +88,12 @@ def instantiate():
     return sum
 
 
-def dataframe_users():
-    users = []
-    fechas = []
-    emails = []
-    ips = []
-    telefonos = []
-    for user in cursorObj.execute("SELECT username FROM usuarios").fetchall():
-        users.append(user[0])
-    for tel in cursorObj.execute("SELECT telefono FROM usuarios group by username").fetchall():
-        if tel[0] is not None:
-            telefonos.append(tel[0])
-        else:
-            telefonos.append(0)
-    for num in cursorObj.execute("SELECT COUNT(fecha) FROM fechas group by username").fetchall():
-        fechas.append(num[0])
-    for num in cursorObj.execute("SELECT emails_total FROM usuarios group by username").fetchall():
-        emails.append(num[0])
-    for num in cursorObj.execute("SELECT COUNT(ip) FROM ips group by username").fetchall():
-        ips.append(num[0])
-    data = {
+def dataframe_v2():
+    df = pd.read_sql_query("SELECT username, telefono, emails_total, provincia FROM usuarios group by username", con)
+    df["IPs"] = pd.read_sql_query("SELECT COUNT(ip) from ips group by username", con)
+    return df
 
-        "Usuario": users,
-        "Telefono": telefonos,
-        "Fechas": fechas,
-        "Emails": emails,
-        "IPs": ips
-    }
-
-    dataframe = pd.DataFrame(data)
-    return dataframe
-
-
-def media_fechas(dataframe) -> float:
+def media_fechas() -> float:
     """Calcula la media del total de fechas que se ha iniciado sesión."""
     sum = 0
     for num in cursorObj.execute("SELECT COUNT(fecha) FROM fechas group by username").fetchall():
@@ -197,9 +170,10 @@ def min_emails_totales() -> int:
 
 
 instantiate()
-dataframe = dataframe_users()
-print(dataframe)
-print("Media del total de fechas que se ha iniciado sesión:\n", media_fechas(dataframe))
+
+#dataframe = dataframe_users()
+dataframe_v2()
+print("Media del total de fechas que se ha iniciado sesión:\n", media_fechas())
 print("Desviación estándar del total de fechas que se ha iniciado sesión:\n", desviacion_fechas())
 print("Media del total de IPs que se han detectado:\n", media_ips())
 print("Desviación estándar del total de IPs que se han detectado:\n", desviacion_ips())
