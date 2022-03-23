@@ -1,5 +1,6 @@
 import pandas as pd
 import sqlite3
+import numpy as np
 
 con = sqlite3.connect('database.db')
 cursorObj = con.cursor()
@@ -42,7 +43,43 @@ def dataframe_correos(rango: str):
         return "error"
 
 
-print(dataframe_permisos(0))
-print(dataframe_permisos(1))
-print(dataframe_correos("mayor"))
-print(dataframe_correos("menor"))
+def mediana(dataframe):
+    return np.median(dataframe["emails_phishing"].to_numpy())
+
+
+def media(dataframe) -> float:
+    return dataframe["emails_phishing"].sum() / len(dataframe)
+
+
+def varianza(dataframe):
+    return np.var(dataframe["emails_phishing"].to_numpy())
+
+
+def maximo(dataframe) -> int:
+    return dataframe["emails_phising"].max()
+
+
+#No sé a que se refiere en este apartado
+def valores_missing(dataframe):
+    missing = 0
+    for index, row in dataframe.iterrows():
+        if row["emails_phishing"] == 0:
+            missing += 1
+    return missing
+
+
+#No sé a que se refiere en este apartado
+def observaciones(dataframe):
+    obs = 0
+    for index, row in dataframe.iterrows():
+        if row["emails_phishing"] != 0:
+            obs += 1
+    return obs
+
+
+#print(dataframe_permisos(0))
+#print(dataframe_permisos(1))
+#print(dataframe_correos("mayor"))
+#print(dataframe_correos("menor"))
+
+print(varianza(dataframe_correos("mayor")))
