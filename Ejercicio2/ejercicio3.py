@@ -30,13 +30,13 @@ def dataframe_correos(rango: str):
                                          "emails_total >= \'{}\' group by username".format(correos), con)
         return df
     elif rango == "menor":
-        df = pd.read_sql_query("SELECT * FROM usuarios WHERE emails_total <= \'{}\' group by username".format(correos),
+        df = pd.read_sql_query("SELECT * FROM usuarios WHERE emails_total < \'{}\' group by username".format(correos),
                                con)
         df["IPs"] = pd.read_sql_query(
             "SELECT COUNT(ip) FROM ips INNER JOIN usuarios USING(username) WHERE emails_total "
-            "<= \'{}\' group by username".format(correos), con)
+            "< \'{}\' group by username".format(correos), con)
         df["Fechas"] = pd.read_sql_query("SELECT COUNT(fecha) FROM fechas INNER JOIN usuarios USING(username) WHERE "
-                                         "emails_total <= \'{}\' group by username".format(correos), con)
+                                         "emails_total < \'{}\' group by username".format(correos), con)
         return df
     else:
         return "error"
