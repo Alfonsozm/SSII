@@ -4,7 +4,7 @@ import json
 import numpy as np
 import math
 
-con = sqlite3.connect('ejercicio1.db')
+con = sqlite3.connect('database.db')
 cursorObj = con.cursor()
 
 
