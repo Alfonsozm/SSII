@@ -31,21 +31,17 @@ def instantiate():
     Si un valor es 'None', no se inserta nada.
     Esta función llama a create()"""
     create()
-    sum = 0
     with open("users.json", "r") as file:
         lines = json.load(file)
 
         for user in lines["usuarios"]:
             for username in user.keys():
-                sum += 9
                 query = "INSERT INTO usuarios (username) VALUES (\'{}\')".format(username)
                 cursorObj.execute(query)
                 telefono = user[username]["telefono"]
                 if telefono != 'None':
                     query = "UPDATE usuarios SET telefono = {} WHERE username = \'{}\'".format(telefono, username)
                     cursorObj.execute(query)
-                else:
-                    sum -= 1
                 query = "UPDATE usuarios SET contrasena = \'{}\' WHERE username = \'{}\'".format(
                     user[username]["contrasena"], username)
                 cursorObj.execute(query)
@@ -53,8 +49,6 @@ def instantiate():
                 if provincia != 'None':
                     query = "UPDATE usuarios SET provincia = \'{}\' WHERE username = \'{}\'".format(provincia, username)
                     cursorObj.execute(query)
-                else:
-                    sum -= 1
                 permisos = user[username]["permisos"]
                 query = "UPDATE usuarios SET permisos = {} WHERE username = \'{}\'".format(permisos, username)
                 cursorObj.execute(query)
@@ -77,7 +71,7 @@ def instantiate():
                         test.append(fecha)
                 test = []
                 if user[username]["ips"] == "None":
-                    query = "INSERT INTO ips (username,ip) VALUES (\'{}\',Null)".format(username, ip)
+                    query = "INSERT INTO ips (username,ip) VALUES (\'{}\',Null)".format(username)
                     cursorObj.execute(query)
                 else:
                     for ip in user[username]["ips"]:
@@ -86,11 +80,10 @@ def instantiate():
                             cursorObj.execute(query)
                             test.append(ip)
     con.commit()
-    return sum
 
 
 def dataframe_v2():
-    df = pd.read_sql_query("SELECT IFNULL(telefono, 'NULL') telefono, emails_total, IFNULL(provincia, 'NULL') provincia FROM usuarios group by username", con)
+    df = pd.read_sql_query("SELECT * FROM usuarios group by username", con)
     df["IPs"] = pd.read_sql_query("SELECT COUNT(ip) from ips group by username", con)
     df["Fechas"] = pd.read_sql_query("SELECT COUNT(fecha) FROM fechas group by username", con)
     return df
@@ -98,27 +91,26 @@ def dataframe_v2():
 
 def valores_missing(dataframe):
     missing = 0
-    #row["emails_total"], row["provincia"], row["IPs"], row["Fechas"])
     for index, row in dataframe.iterrows():
-        if row["telefono"] == "NULL":
+        if math.isnan(row["telefono"]):
             missing += 1
-        if row["provincia"] == "NULL":
+        if row["provincia"] is None:
             missing += 1
         if row["IPs"] == 0:
             missing += 1
-
-
     return missing
+
+def valores_presentes(dataframe):
+    """Calcula el tamaño total del dataframe y se le resta los valores que no esten presentes"""
+    return len(dataframe)*len(dataframe.columns) - valores_missing(dataframe)
 
 def media_fechas(dataframe) -> float:
     """Calcula la media del total de fechas que se ha iniciado sesión."""
-    # x / len(dataframe)
     return dataframe["Fechas"].sum() / len(dataframe)
 
 
 def desviacion_fechas(dataframe) -> float:
     """Calcula la desviación estándar del total de fechas que se ha iniciado sesión."""
-    # np.std(arr)
     return float(np.std(dataframe["Fechas"].to_numpy()))
 
 
@@ -164,10 +156,8 @@ def min_emails_totales(dataframe) -> int:
 
 instantiate()
 
-# dataframe = dataframe_users()
 df = dataframe_v2()
-print(df)
-print("Valores missing:\n", valores_missing(df))
+print("Muestras presentes:\n", valores_presentes(df))
 print("Media del total de fechas que se ha iniciado sesión:\n", media_fechas(df))
 print("Desviación estándar del total de fechas que se ha iniciado sesión:\n", desviacion_fechas(df))
 print("Media del total de IPs que se han detectado:\n", media_ips(df))
