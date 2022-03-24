@@ -10,12 +10,11 @@ cursorObj = con.cursor()
 
 
 def usuarios_criticos():
-    # Primero filtrar por contaseñas debiles y luego coger los que tengas mas emails clicados
-    df = pd.read_sql_query("SELECT username, emails_clicados, contrasena FROM usuarios ORDER BY emails_clicados DESC",
-                           con)
-    lista_contrasenas = df["contrasena"].tolist()
-    set_contrasenas = set(lista_contrasenas)
+    """A partir de una wordlist de contraseñas he creado una wordlist con los hashes de estas contraseñas
+    y las que coincidian con los hashes de las de los usuarios las he guardado en un .txt"""
 
+    #lista_contrasenas = df["contrasena"].tolist()
+    #set_contrasenas = set(lista_contrasenas)
     # Creacion de .txt con hashes definitivamente eficiente XD
     # with open("realhuman_phill.txt", "r", encoding='ISO-8859-1') as file:
     #    pss = file.read()
@@ -38,6 +37,9 @@ def usuarios_criticos():
     # with open("weak_pass.txt", "w") as file:
     #    for hash in matches:
     #        file.write(hash+"\n")
+
+    df = pd.read_sql_query("SELECT username, emails_clicados, contrasena FROM usuarios ORDER BY emails_clicados DESC",
+    con)
 
     with open("weak_pass.txt", "r") as file:
         weak_passwords = set(file.read().split("\n"))
