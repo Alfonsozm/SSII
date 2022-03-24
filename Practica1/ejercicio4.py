@@ -26,27 +26,25 @@ def usuarios_criticos():
     #    for password in lista:
     #        hashes.write(hashlib.md5(bytes(password, 'utf-8')).hexdigest() + "\n")
 
-    #Más rápido que Raio Macuin
-    set_hashes = set(line.strip() for line in open('hashes.txt'))
+    # Más rápido que Raio Macuin
+    # set_hashes = set(line.strip() for line in open('hashes.txt'))
 
-    matches = set()
-    for password in set_contrasenas:
-        if password in set_hashes:
-            print("Contraseña vulnerable:", password)
-            matches.add(password)
+    # matches = set()
+    # for password in set_contrasenas:
+    #    if password in set_hashes:
+    #        print("Contraseña vulnerable:", password)
+    #        matches.add(password)
 
-    #df_xd = pd.DataFrame()
-    #for password in abc:
-    #df_xd = pd.read_sql_query("SELECT username, emails_clicados FROM usuarios WHERE contrasena IN ({})".format(abc), con)
-    df_xd = df[df["contrasena"].isin(matches)]
+    # with open("weak_pass.txt", "w") as file:
+    #    for hash in matches:
+    #        file.write(hash+"\n")
+
+    with open("weak_pass.txt", "r") as file:
+        weak_passwords = set(file.read().split("\n"))
+    print(weak_passwords)
+    df_xd = df[df["contrasena"].isin(weak_passwords)]
     df_xd = df_xd.head(10)
     print(df_xd)
-    # for password in lista:
-    #    #print(password)
-    #    guess = hashlib.md5(bytes(password, 'utf-8')).hexdigest()
-    #    if guess in set_contrasenas:
-    #        print("Contraseña vulnerable:", guess)
-    #        x.add(guess)
 
 
 def webs_politicas_desactualizadas():
