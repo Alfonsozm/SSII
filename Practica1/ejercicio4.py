@@ -2,8 +2,8 @@ import pandas as pd
 import sqlite3
 import numpy as np
 import matplotlib.pyplot as plt
-import hashlib
-from urllib.request import urlopen
+#import hashlib
+#from urllib.request import urlopen
 
 con = sqlite3.connect('database.db')
 cursorObj = con.cursor()
@@ -13,8 +13,8 @@ def usuarios_criticos():
     """A partir de una wordlist de contraseñas he creado una wordlist con los hashes de estas contraseñas
     y las que coincidian con los hashes de las de los usuarios las he guardado en un .txt"""
 
-    #lista_contrasenas = df["contrasena"].tolist()
-    #set_contrasenas = set(lista_contrasenas)
+    # lista_contrasenas = df["contrasena"].tolist()
+    # set_contrasenas = set(lista_contrasenas)
     # Creacion de .txt con hashes definitivamente eficiente XD
     # with open("realhuman_phill.txt", "r", encoding='ISO-8859-1') as file:
     #    pss = file.read()
@@ -39,13 +39,21 @@ def usuarios_criticos():
     #        file.write(hash+"\n")
 
     df = pd.read_sql_query("SELECT username, emails_clicados, contrasena FROM usuarios ORDER BY emails_clicados DESC",
-    con)
+                           con)
 
     with open("weak_pass.txt", "r") as file:
         weak_passwords = set(file.read().split("\n"))
-    #print(weak_passwords)
+    # print(weak_passwords)
     df_xd = df[df["contrasena"].isin(weak_passwords)]
     df_xd = df_xd.head(10)
+
+    indice = np.arange(len(df_xd))
+    ancho = 0.35
+    plt.bar(indice, df_xd['emails_clicados'], width=ancho, color='r', label='cookies')
+    plt.xticks(indice + ancho, df_xd["username"])
+    plt.xlabel('webs')
+    plt.title('Top 10 usuarios críticos')
+    plt.show()
     return df_xd
 
 
@@ -54,10 +62,20 @@ def webs_politicas_desactualizadas():
     df["Politicas"] = df["cookies"] + df["aviso"] + df["proteccion_de_datos"]
     df = df[df["Politicas"] == 1]
     df = df.sort_values("url").head(5)
+    df = df.replace({0:1, 1:0})
+    indice = np.arange(len(df))
+    ancho = 0.35
+    plt.bar(indice, df['cookies'], width=ancho, color='b', label='cookies')
+    plt.bar(indice + ancho, df['aviso'], width=ancho, color='r', label='aviso')
+    plt.bar(indice + ancho, df['proteccion_de_datos'], width=ancho, color='g', label='proteccion_de_datos')
+    plt.xticks(indice + ancho, df["url"])
+    plt.xlabel('webs')
+    plt.title('Top 5 webs desactualizadas')
+    plt.show()
     return df
 
 def media_conexiones_vulnerables(condicion: bool):
-    #No sé si con conexiones tengo que contar ips o fechas
+    # No sé si con conexiones tengo que contar ips o fechas
     if condicion:
         df = pd.read_sql_query(
             "SELECT username, contrasena FROM usuarios",
@@ -79,7 +97,7 @@ def media_conexiones_vulnerables(condicion: bool):
 
 
 def webs_creacion():
-    #No entiendo bien a que se refiere
+    # No entiendo bien a que se refiere
     df = pd.read_sql_query("SELECT creacion, url, cookies, aviso, proteccion_de_datos FROM webs ORDER BY url", con)
     df["Politicas"] = df["cookies"] + df["aviso"] + df["proteccion_de_datos"]
     df_cumplen = df[df["Politicas"] == 3]
@@ -105,7 +123,7 @@ def num_contrasenas_comprometidas():
 # usuarios_criticos()
 print("10 usuarios más críticos:\n", usuarios_criticos())
 print()
-print("Webs con más políticas desactualizadas:\n",webs_politicas_desactualizadas())
+print("Webs con más políticas desactualizadas:\n", webs_politicas_desactualizadas())
 print()
 print("Media de conexiones de usuarios con contraseña vulnerable:", media_conexiones_vulnerables(True))
 print("Media de conexiones de usuarios con contraseña no vulnerable:", media_conexiones_vulnerables(False))
