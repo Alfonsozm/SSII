@@ -43,10 +43,10 @@ def usuarios_criticos():
 
     with open("weak_pass.txt", "r") as file:
         weak_passwords = set(file.read().split("\n"))
-    print(weak_passwords)
+    #print(weak_passwords)
     df_xd = df[df["contrasena"].isin(weak_passwords)]
     df_xd = df_xd.head(10)
-    print(df_xd)
+    return df_xd
 
 
 def webs_politicas_desactualizadas():
@@ -54,10 +54,62 @@ def webs_politicas_desactualizadas():
     df["Politicas"] = df["cookies"] + df["aviso"] + df["proteccion_de_datos"]
     df = df[df["Politicas"] == 1]
     df = df.sort_values("url").head(5)
-    print(df)
+    return df
+
+def media_conexiones_vulnerables(condicion: bool):
+    #No sé si con conexiones tengo que contar ips o fechas
+    if condicion:
+        df = pd.read_sql_query(
+            "SELECT username, contrasena FROM usuarios",
+            con)
+        df["IPs"] = pd.read_sql_query("SELECT COUNT(ip) FROM ips group by username", con)
+        with open("weak_pass.txt", "r") as file:
+            weak_passwords = set(file.read().split("\n"))
+        df_xd = df[df["contrasena"].isin(weak_passwords)]
+        return df["IPs"].sum() / len(df)
+    else:
+        df = pd.read_sql_query(
+            "SELECT username, contrasena FROM usuarios",
+            con)
+        df["IPs"] = pd.read_sql_query("SELECT COUNT(ip) FROM ips group by username", con)
+        with open("weak_pass.txt", "r") as file:
+            weak_passwords = set(file.read().split("\n"))
+        df_xd = df[~df["contrasena"].isin(weak_passwords)]
+        return df["IPs"].sum() / len(df)
+
+
+def webs_creacion():
+    #No entiendo bien a que se refiere
+    df = pd.read_sql_query("SELECT creacion, url, cookies, aviso, proteccion_de_datos FROM webs ORDER BY url", con)
+    df["Politicas"] = df["cookies"] + df["aviso"] + df["proteccion_de_datos"]
+    df_cumplen = df[df["Politicas"] == 3]
+    print(df_cumplen)
+    df_no_cumplen = df[df["Politicas"] != 3]
+    print(df_no_cumplen)
+
+
+def num_contrasenas_comprometidas():
+    df = pd.read_sql_query(
+        "SELECT username, contrasena FROM usuarios",
+        con)
+    df["IPs"] = pd.read_sql_query("SELECT COUNT(ip) FROM ips group by username", con)
+    with open("weak_pass.txt", "r") as file:
+        weak_passwords = set(file.read().split("\n"))
+    df_comprometidas = df[df["contrasena"].isin(weak_passwords)]
+    df_no_comprometidas = df[~df["contrasena"].isin(weak_passwords)]
+    print("Número de contraseñas comprometidas:", len(df_comprometidas))
+    print("Número de contraseñas no comprometidas:", len(df_no_comprometidas))
 
 
 # grafico_criticos()
 # usuarios_criticos()
-usuarios_criticos()
-webs_politicas_desactualizadas()
+print("10 usuarios más críticos:\n", usuarios_criticos())
+print()
+print("Webs con más políticas desactualizadas:\n",webs_politicas_desactualizadas())
+print()
+print("Media de conexiones de usuarios con contraseña vulnerable:", media_conexiones_vulnerables(True))
+print("Media de conexiones de usuarios con contraseña no vulnerable:", media_conexiones_vulnerables(False))
+print()
+webs_creacion()
+print()
+num_contrasenas_comprometidas()
