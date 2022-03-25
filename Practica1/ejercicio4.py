@@ -50,14 +50,14 @@ def usuarios_criticos():
 
 
 def webs_politicas_desactualizadas():
-    df = pd.read_sql_query("SELECT url, cookies, aviso, proteccion_de_datos FROM webs WHERE (cookies = 0 AND aviso = 0 "
-                           "AND proteccion_de_datos = 0) OR (cookies = 0 AND aviso = 0) "
-                           "OR (cookies = 0 AND proteccion_de_datos = 0) OR (aviso = 0 AND proteccion_de_datos = 0) "
-                           "GROUP BY url LIMIT 5", con)
+    df = pd.read_sql_query("SELECT url, cookies, aviso, proteccion_de_datos FROM webs ORDER BY url", con)
+    df["Politicas"] = df["cookies"] + df["aviso"] + df["proteccion_de_datos"]
+    df = df[df["Politicas"] == 1]
+    df = df.sort_values("url").head(5)
     print(df)
 
 
 # grafico_criticos()
 # usuarios_criticos()
 usuarios_criticos()
-# webs_politicas_desactualizadas()
+webs_politicas_desactualizadas()
