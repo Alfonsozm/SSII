@@ -1,6 +1,7 @@
 import pandas as pd
 import sqlite3
 import numpy as np
+import math
 
 con = sqlite3.connect('database.db')
 cursorObj = con.cursor()
@@ -18,26 +19,25 @@ def dataframe_permisos(permisos: int):
         return "error"
 
 
-def dataframe_correos(rango: str):
-    correos = 200
-
-    if rango == "mayor":
-        df = pd.read_sql_query("SELECT * FROM usuarios WHERE emails_total >= \'{}\' group by username".format(correos),
+def dataframe_correos(rango: int):
+    if rango > 0:
+        df = pd.read_sql_query("SELECT * FROM usuarios WHERE emails_total >= \'{}\' group by username".format(rango),
                                con)
         df["IPs"] = pd.read_sql_query(
             "SELECT COUNT(ip) FROM ips INNER JOIN usuarios USING(username) WHERE emails_total "
-            ">= \'{}\' group by username".format(correos), con)
+            ">= \'{}\' group by username".format(rango), con)
         df["Fechas"] = pd.read_sql_query("SELECT COUNT(fecha) FROM fechas INNER JOIN usuarios USING(username) WHERE "
-                                         "emails_total >= \'{}\' group by username".format(correos), con)
+                                         "emails_total >= \'{}\' group by username".format(rango), con)
         return df
-    elif rango == "menor":
-        df = pd.read_sql_query("SELECT * FROM usuarios WHERE emails_total < \'{}\' group by username".format(correos),
+    elif rango < 0:
+        rango = -rango
+        df = pd.read_sql_query("SELECT * FROM usuarios WHERE emails_total < \'{}\' group by username".format(rango),
                                con)
         df["IPs"] = pd.read_sql_query(
             "SELECT COUNT(ip) FROM ips INNER JOIN usuarios USING(username) WHERE emails_total "
-            "< \'{}\' group by username".format(correos), con)
+            "< \'{}\' group by username".format(rango), con)
         df["Fechas"] = pd.read_sql_query("SELECT COUNT(fecha) FROM fechas INNER JOIN usuarios USING(username) WHERE "
-                                         "emails_total < \'{}\' group by username".format(correos), con)
+                                         "emails_total < \'{}\' group by username".format(rango), con)
         return df
     else:
         return "error"
@@ -63,24 +63,17 @@ def minimo(dataframe) -> int:
     return dataframe["emails_phishing"].min()
 
 
-#No sé a que se refiere en este apartado
 def valores_missing(dataframe):
     missing = 0
     for index, row in dataframe.iterrows():
-        if row["emails_phishing"] is None:
+        if row["emails_phishing"] is None or math.isnan(row["emails_phishing"]):
             missing += 1
     return missing
 
 
-#No sé a que se refiere en este apartado
 def observaciones(dataframe) -> int:
     return dataframe["emails_phishing"].sum()
 
-
-#print(dataframe_permisos(0))
-#print(dataframe_permisos(1))
-#print(dataframe_correos("mayor"))
-#print(dataframe_correos("menor"))
 
 df_administradores = dataframe_permisos(1)
 df_usuarios = dataframe_permisos(0)
@@ -106,8 +99,8 @@ print("Valor máximo:", maximo(df_usuarios))
 print("Valor mínimo:", minimo(df_usuarios))
 print()
 
-df_correosmas = dataframe_correos("mayor")
-df_correosmenos = dataframe_correos("menor")
+df_correosmas = dataframe_correos(200)
+df_correosmenos = dataframe_correos(-200)
 print("Resultados por agrupación de número de emails recibidos:")
 print("Más de 200 correos:")
 print("Número de observaciones:", observaciones(df_correosmas))

@@ -38,12 +38,17 @@ def usuarios_criticos():
     #    for hash in matches:
     #        file.write(hash+"\n")
 
-    df = pd.read_sql_query("SELECT username, emails_clicados, contrasena FROM usuarios ORDER BY emails_clicados DESC",
+    df = pd.read_sql_query("SELECT username, emails_clicados, emails_phishing, contrasena FROM usuarios",
                            con)
+    for index, row in df.iterrows():
+        if row["emails_phishing"] != 0:
+            df._set_value(index, "prob_click", row["emails_clicados"] / row["emails_phishing"])
+        else:
+            df._set_value(index, "prob_click", 0)
+    df = df.sort_values("prob_click", ascending=False)
 
     with open("weak_pass.txt", "r") as file:
         weak_passwords = set(file.read().split("\n"))
-    # print(weak_passwords)
     df_xd = df[df["contrasena"].isin(weak_passwords)]
     df_xd = df_xd.head(10)
 
@@ -74,8 +79,8 @@ def webs_politicas_desactualizadas():
     plt.show()
     return df
 
+
 def media_conexiones_vulnerables(condicion: bool):
-    # No sé si con conexiones tengo que contar ips o fechas
     if condicion:
         df = pd.read_sql_query(
             "SELECT username, contrasena FROM usuarios",
@@ -97,7 +102,6 @@ def media_conexiones_vulnerables(condicion: bool):
 
 
 def webs_creacion():
-    # No entiendo bien a que se refiere
     df = pd.read_sql_query("SELECT creacion, url, cookies, aviso, proteccion_de_datos FROM webs ORDER BY url", con)
     df["Politicas"] = df["cookies"] + df["aviso"] + df["proteccion_de_datos"]
     df_cumplen = df[df["Politicas"] == 3]
@@ -119,8 +123,6 @@ def num_contrasenas_comprometidas():
     print("Número de contraseñas no comprometidas:", len(df_no_comprometidas))
 
 
-# grafico_criticos()
-# usuarios_criticos()
 print("10 usuarios más críticos:\n", usuarios_criticos())
 print()
 print("Webs con más políticas desactualizadas:\n", webs_politicas_desactualizadas())
