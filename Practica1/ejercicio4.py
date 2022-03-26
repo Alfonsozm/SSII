@@ -90,7 +90,7 @@ def media_conexiones_vulnerables(condicion: bool):
         with open("weak_pass.txt", "r") as file:
             weak_passwords = set(file.read().split("\n"))
         df_xd = df[df["contrasena"].isin(weak_passwords)]
-        return df["IPs"].sum() / len(df)
+        return df_xd["IPs"].sum() / len(df_xd)
     else:
         df = pd.read_sql_query(
             "SELECT username, contrasena FROM usuarios",
@@ -99,7 +99,7 @@ def media_conexiones_vulnerables(condicion: bool):
         with open("weak_pass.txt", "r") as file:
             weak_passwords = set(file.read().split("\n"))
         df_xd = df[~df["contrasena"].isin(weak_passwords)]
-        return df["IPs"].sum() / len(df)
+        return df_xd["IPs"].sum() / len(df_xd)
 
 
 def webs_creacion():
