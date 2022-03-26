@@ -66,15 +66,14 @@ def usuarios_criticos():
 def webs_politicas_desactualizadas():
     df = pd.read_sql_query("SELECT url, cookies, aviso, proteccion_de_datos FROM webs ORDER BY url", con)
     df["Politicas"] = df["cookies"] + df["aviso"] + df["proteccion_de_datos"]
-    df = df[df["Politicas"] == 1]
-    df = df.sort_values("url").head(5)
-    df = df.replace({0:1, 1:0})
-    indice = np.arange(len(df))
+    df = df.sort_values("Politicas").head(5)
+    df_aux = df.replace({0:1, 1:0})
+    indice = np.arange(len(df_aux))
     ancho = 0.35
-    plt.bar(indice, df['cookies'], width=ancho, color='b', label='cookies')
-    plt.bar(indice + ancho, df['aviso'], width=ancho, color='r', label='aviso')
-    plt.bar(indice + ancho, df['proteccion_de_datos'], width=ancho, color='g', label='proteccion_de_datos')
-    plt.xticks(indice + ancho, df["url"])
+    plt.bar(indice, df_aux['cookies'], width=ancho, color='b', label='cookies')
+    plt.bar(indice + ancho, df_aux['aviso'], width=ancho, color='r', label='aviso')
+    plt.bar(indice + ancho, df_aux['proteccion_de_datos'], width=ancho, color='g', label='proteccion_de_datos')
+    plt.xticks(indice + ancho, df_aux["url"])
     plt.xlabel('webs')
     plt.title('Top 5 webs desactualizadas')
     plt.show()
