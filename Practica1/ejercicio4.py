@@ -54,9 +54,10 @@ def usuarios_criticos():
 
     indice = np.arange(len(df_xd))
     ancho = 0.35
-    plt.bar(indice, df_xd['emails_clicados'], width=ancho, color='r', label='cookies')
+    plt.bar(indice, df_xd['prob_click'], width=ancho, color='r', label='cookies')
     plt.xticks(indice + ancho, df_xd["username"])
-    plt.xlabel('webs')
+    plt.xlabel('Usuarios')
+    plt.ylabel('Probabilidad de click')
     plt.title('Top 10 usuarios críticos')
     plt.show()
     return df_xd
