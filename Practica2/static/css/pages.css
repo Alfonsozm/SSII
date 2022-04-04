@@ -1,0 +1,20 @@
+ .u-section-1 {
+  background-image: url("../images/0bad8b5e4dbd31f77599cf312542f7d4ab88eddb48c5e6173c58c987f6030558f0c1cd709bcfc9af8f94495cea164aa6e2af739e6faeae0d94a3d8_12801-12.jpg");
+  background-position: 50% 50%;
+}
+
+.u-section-1 .u-sheet-1 {
+  min-height: 500px;
+}
+
+@media (max-width: 767px) {
+  .u-section-1 .u-sheet-1 {
+    min-height: 480px;
+  }
+}
+
+@media (max-width: 575px) {
+  .u-section-1 .u-sheet-1 {
+    min-height: 347px;
+  }
+}
