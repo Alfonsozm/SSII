@@ -1,6 +1,5 @@
 import pandas as pd
 import sqlite3
-import matplotlib.pyplot as plt
 from flask import Flask, render_template, request
 import altair as alt
 import requests
@@ -9,6 +8,7 @@ con = sqlite3.connect('database.db', check_same_thread=False)
 cursorObj = con.cursor()
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
+
 
 @app.route("/")
 def index():
@@ -38,7 +38,7 @@ def vuln_webs():
 
 @app.route("/vulnerabilities/")
 def vulns():
-    return render_template('vulnerabilities.html', vulns=get_latest_vuln().head(10).to_html())
+    return render_template('vulnerabilities.html', vulns=get_latest_vuln())
 
 
 # Ejercicio 2
@@ -83,7 +83,13 @@ def df_spam_click(greater: bool):
 def get_latest_vuln():
     response = requests.get("https://cve.circl.lu/api/last")
     if response.status_code == 200:
-        return pd.read_json(response.json())["id"]
+        json = response.text
+        df = pd.DataFrame()
+        df["id"] = pd.read_json(json)["id"]
+        print(df)
+        df["summary"] = pd.read_json(json)["summary"]
+        print(df)
+        return df.head(10).to_html()
     else:
         raise Exception
 
