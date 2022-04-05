@@ -86,9 +86,7 @@ def get_latest_vuln():
         json = response.text
         df = pd.DataFrame()
         df["id"] = pd.read_json(json)["id"]
-        print(df)
         df["summary"] = pd.read_json(json)["summary"]
-        print(df)
         return df.head(10).to_html()
     else:
         raise Exception
