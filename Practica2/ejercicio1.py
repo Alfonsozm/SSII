@@ -13,7 +13,7 @@ cursorObj = con.cursor()
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 @app.route("/")
-def iindex():
+def index():
     return render_template('index.html')
 
 @app.route("/users/")
