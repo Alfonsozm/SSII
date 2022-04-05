@@ -119,6 +119,9 @@
         var opt = {"renderer": "canvas", "actions": false};  /* Options for the embedding */
         vegaEmbed("#vis", par, opt);
     </script>
+    {% autoescape off %}
+    {{ click }}
+    {% endautoescape %}
 
 </section>
 </body>

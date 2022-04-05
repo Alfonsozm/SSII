@@ -3,6 +3,7 @@ import sqlite3
 import matplotlib.pyplot as plt
 from flask import Flask, render_template, request
 import altair as alt
+import requests
 
 con = sqlite3.connect('database.db', check_same_thread=False)
 cursorObj = con.cursor()
@@ -21,8 +22,9 @@ def users():
     amount = args.get("amount", default=10)
     df = df_critic_users(int(amount))
     chart = alt.Chart(df).mark_bar().encode(x="username", y="prob_click")
+    df2 = df_spam_click(bool(args.get("greater", default=False)))
 
-    return render_template('users.html', graphJSON=chart.to_json())
+    return render_template('users.html', graphJSON=chart.to_json(), click=df2.to_html())
 
 
 @app.route("/pages/")
@@ -37,9 +39,10 @@ def vuln_webs():
 
 @app.route("/vulnerabilities/")
 def vulns():
-    return render_template('vulnerabilities.html')
+    return render_template('vulnerabilities.html', vulns=get_latest_vuln().head(10).to_html())
 
 
+# Ejercicio 2
 def df_critic_users(top: int):
     df = pd.read_sql_query("SELECT username, emails_clicados, emails_phishing, contrasena FROM usuarios", con)
     for index, row in df.iterrows():
@@ -63,6 +66,27 @@ def df_vuln_webs(top: int):
     df = df.sort_values("Politicas").head(top)
     # df = df.replace({0:1, 1:0})
     return df
+
+
+# Ejercicio 3
+def df_spam_click(greater: bool):
+    if greater:
+        return pd.read_sql_query(
+            "SELECT username,telefono,provincia,emails_total,emails_phishing,emails_clicados FROM usuarios where emails_clicados>usuarios.emails_phishing/2",
+            con)
+    else:
+        return pd.read_sql_query(
+            "SELECT username,telefono,provincia,emails_total,emails_phishing,emails_clicados FROM usuarios where emails_clicados<=usuarios.emails_phishing/2",
+            con)
+
+
+# Ejercicio 4
+def get_latest_vuln():
+    response = requests.get("https://cve.circl.lu/api/last")
+    if response.status_code == 200:
+        return pd.read_json(response.json())["id"]
+    else:
+        raise Exception
 
 
 if __name__ == '__main__':
