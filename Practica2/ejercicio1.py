@@ -1,7 +1,7 @@
 import pandas as pd
 import sqlite3
 import matplotlib.pyplot as plt
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import altair as alt
 
 con = sqlite3.connect('database.db', check_same_thread=False)
@@ -9,13 +9,17 @@ cursorObj = con.cursor()
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
+
 @app.route("/")
 def index():
     return render_template('index.html')
 
+
 @app.route("/users/")
 def users():
-    df = df_critic_users(10)
+    args = request.args
+    amount = args.get("amount", default=10)
+    df = df_critic_users(int(amount))
     chart = alt.Chart(df).mark_bar().encode(x="username", y="prob_click")
 
     return render_template('users.html', graphJSON=chart.to_json())
@@ -23,7 +27,13 @@ def users():
 
 @app.route("/pages/")
 def vuln_webs():
-    return render_template('pages.html')
+    args = request.args
+    amount = args.get("amount", default=5)
+    df = df_vuln_webs(int(amount))
+    chart = alt.Chart(df).mark_bar().encode(x="url", y="Politicas")
+
+    return render_template('pages.html', graphJSON=chart.to_json())
+
 
 @app.route("/vulnerabilities/")
 def vulns():
@@ -53,8 +63,6 @@ def df_vuln_webs(top: int):
     df = df.sort_values("Politicas").head(top)
     # df = df.replace({0:1, 1:0})
     return df
-
-
 
 
 if __name__ == '__main__':
