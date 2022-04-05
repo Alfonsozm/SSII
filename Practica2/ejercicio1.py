@@ -2,10 +2,7 @@ import pandas as pd
 import sqlite3
 import matplotlib.pyplot as plt
 from flask import Flask, render_template
-import io
-from flask import Response
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.ticker import MaxNLocator
+import altair as alt
 
 con = sqlite3.connect('database.db', check_same_thread=False)
 cursorObj = con.cursor()
@@ -18,7 +15,11 @@ def index():
 
 @app.route("/users/")
 def users():
-    return render_template('users.html')
+    df = df_critic_users(10)
+    chart = alt.Chart(df).mark_bar().encode(x="username", y="prob_click")
+
+    return render_template('users.html', graphJSON=chart.to_json())
+
 
 @app.route("/pages/")
 def vuln_webs():
