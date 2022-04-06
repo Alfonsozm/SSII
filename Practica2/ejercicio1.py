@@ -91,6 +91,10 @@ def get_latest_vuln():
     else:
         raise Exception
 
+#Ejercicio 5
+@app.route("/extra/")
+def extra():
+    return render_template('extra.html', vulns=get_latest_vuln())
 
 if __name__ == '__main__':
     app.run()
