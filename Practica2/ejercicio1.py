@@ -1,13 +1,71 @@
 import pandas as pd
 import sqlite3
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import altair as alt
 import requests
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
+from LoggedUser import LoggedUser
+from hashlib import md5
 
 con = sqlite3.connect('database.db', check_same_thread=False)
 cursorObj = con.cursor()
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
+app.config['SECRET_KEY'] = '1'
+login_manager = LoginManager(app)
+login_manager.login_view = "/login"
+
+
+def get_user(username):
+    db_user = pd.read_sql_query("SELECT * FROM usuarios WHERE username=\'{}\'".format(username), con)
+    if db_user.size == 0:
+        return None
+    return db_user
+
+
+@login_manager.user_loader
+def user_loader(username):
+    if get_user(username) is not None:
+        return LoggedUser(username)
+    return None
+
+
+@app.route('/login', methods=['GET'])
+def login_form():
+    redirection = request.args.get("next", default="/")
+    redirection = redirection if redirection.startswith("/") else "/"
+    if current_user.is_authenticated:
+        return redirect(redirection)
+    if request.args.get("error", default="false") == "true":
+        return render_template("login.html", error="Incorrect username or password")
+    return render_template("login.html", redirection=redirection)
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(request.form.get("redirection"))
+    username = request.form.get("username")
+    password = request.form.get("password")
+    user = get_user(username)
+    if user is not None and user.iloc[0]["contrasena"] == md5(bytes(password, 'utf-8')).hexdigest():
+        login_user(LoggedUser(username))
+        return redirect(request.form.get("redirection"))
+    return redirect("/login?error=true")
+
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    logout_user()
+    return redirect("/")
+
+
+@app.route('/profile', methods=['GET'])
+@login_required
+def profile():
+    user = get_user(current_user.get_id())
+    user = user[['username', 'telefono', 'provincia']]
+    return render_template("user.html", user=user.to_html())
 
 
 @app.route("/")
@@ -104,7 +162,7 @@ def extra():
 
 
 def df_emails_phising(top: int):
-    #TODO: agrupar por admin y user
+    # TODO: agrupar por admin y user
     df = pd.read_sql_query("SELECT username, emails_phishing FROM usuarios", con)
     return df.sort_values("emails_phishing", ascending=False).head(top)
 

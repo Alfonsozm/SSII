@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/login" method="post">
+
+    <label class="form-label">Username <input type="text"
+                                              name="username"
+                                              required
+                                              maxlength="255">
+
+    </label>
+    </br>
+
+    <label class="form-label">Password <input type="password"
+                                              name="password"
+                                              required>
+
+    </label>
+    </br>
+    {{ error }}
+    <input class="button-action" type="submit" value="Login" id="login_button">
+    <input type="hidden" value="{{ redirection }}" name = "redirection">
+</form>
+</body>
+</html>
