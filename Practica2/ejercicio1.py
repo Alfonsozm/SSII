@@ -153,18 +153,22 @@ def get_latest_vuln():
 # Ejercicio 5
 @app.route("/extra/")
 def extra():
+    admin = True
     args = request.args
     amount = args.get("amount", default=10)
-    df = df_emails_phising(int(amount))
+    df = df_emails_phising(int(amount), admin)
     chart = alt.Chart(df).mark_bar().encode(x="username", y="emails_phishing")
     df2 = df_spam_click(bool(args.get("greater", default=False)))
     return render_template('extra.html', graphJSON=chart.to_json())
 
 
-def df_emails_phising(top: int):
-    # TODO: agrupar por admin y user
-    df = pd.read_sql_query("SELECT username, emails_phishing FROM usuarios", con)
-    return df.sort_values("emails_phishing", ascending=False).head(top)
+def df_emails_phising(top: int, admin: bool):
+    if admin:
+        df = pd.read_sql_query("SELECT username, emails_phishing FROM usuarios WHERE permisos == 1", con)
+        return df.sort_values("emails_phishing", ascending=False).head(top)
+    else:
+        df = pd.read_sql_query("SELECT username, emails_phishing FROM usuarios WHERE permisos == 0", con)
+        return df.sort_values("emails_phishing", ascending=False).head(top)
 
 
 if __name__ == '__main__':
