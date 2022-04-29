@@ -101,3 +101,31 @@ for i in range(len(clf.estimators_)):
                     rounded=True, proportion=False,
                     precision=2, filled=True)
     call(['dot', '-Tpng', 'tree.dot', '-o', 'tree' + str(i) + '.png', '-Gdpi=600'])
+
+
+#Predictions from real data
+with open("users_IA_predecir.json", "r") as file:
+    data = json.load(file)
+
+usernames = []
+received = []
+clicks = []
+for user in data["usuarios"]:
+    usernames = usernames + [user["usuario"]]
+    received = received + [user["emails_phishing_recibidos"]]
+    clicks = clicks + [user["emails_phishing_clicados"]]
+
+df_data = pd.DataFrame()
+df_data["received"] = received
+df_data["clicks"] = clicks
+for index, row in df_data.iterrows():
+    if row["received"] != 0:
+        df_data._set_value(index, "prob_click", row["clicks"] / row["received"])
+    else:
+        df_data._set_value(index, "prob_click", 0)
+df_data = df_data.to_numpy()
+df_data = df_data[:, np.newaxis, 2]
+
+print(regr.predict(df_data))
+print(clf.predict(df_data))
+print(clf_model.predict(df_data))
