@@ -119,3 +119,4 @@ for i in range(len(clf.estimators_)):
                     rounded=True, proportion=False,
                     precision=2, filled=True)
     call(['dot', '-Tpng', 'forest.dot', '-o', 'forest' + str(i) + '.png', '-Gdpi=600'])
+
