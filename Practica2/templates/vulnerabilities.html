@@ -55,6 +55,10 @@
                     </li>
                     <li class="u-nav-item"><a
                             class="u-button-style u-nav-link u-text-active-palette-2-base u-text-grey-90 u-text-hover-palette-2-base"
+                            href="/login" style="padding: 10px;">Login</a>
+                    </li>
+                    <li class="u-nav-item"><a
+                            class="u-button-style u-nav-link u-text-active-palette-2-base u-text-grey-90 u-text-hover-palette-2-base"
                             href="/users" style="padding: 10px;">Usuarios</a>
                     </li>
                     <li class="u-nav-item"><a
@@ -65,6 +69,10 @@
                             class="u-button-style u-nav-link u-text-active-palette-2-base u-text-grey-90 u-text-hover-palette-2-base"
                             href="/vulnerabilities" style="padding: 10px;">Vulnerabilidades</a>
                     </li>
+                    <li class="u-nav-item"><a
+                            class="u-button-style u-nav-link u-text-active-palette-2-base u-text-grey-90 u-text-hover-palette-2-base"
+                            href="/extra" style="padding: 10px;">extra</a>
+                    </li>
                 </ul>
             </div>
             <div class="u-custom-menu u-nav-container-collapse">
@@ -74,11 +82,15 @@
                         <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2">
                             <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/">Home</a>
                             </li>
+                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/login">Login</a>
+                            </li>
                             <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/users">Usuarios</a>
                             </li>
                             <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/pages">Páginas</a>
                             </li>
                             <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/vulnerabilities">Vulnerabilidades</a>
+                            </li>
+                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/extra">Extra</a>
                             </li>
                         </ul>
                     </div>
@@ -90,8 +102,10 @@
 </header>
 <section class="u-clearfix u-image u-section-1" id="sec-39ab" data-image-width="1280" data-image-height="853">
     <div class="u-clearfix u-sheet u-sheet-1"></div>
+    {% autoescape off %}
+    {{ vulns }}
+    {% endautoescape %}
 </section>
-
 
 <footer class="u-align-center u-clearfix u-footer u-grey-80 u-footer" id="sec-72ea">
     <div class="u-align-left u-clearfix u-sheet u-sheet-1"></div>
@@ -107,8 +121,5 @@
         <span>Website Builder Software</span>
     </a>.
 </section>
-{% autoescape off %}
-{{ vulns }}
-{% endautoescape %}
 </body>
 </html>

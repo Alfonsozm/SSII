@@ -1,29 +1,150 @@
 <!DOCTYPE html>
-<html lang="en">
+<html style="font-size: 16px;">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords"
+          content="Our Mission, The Future is Here, ​Architectural Design &amp;amp; Research, Architectural Agency, About Company, Our Team, ​Building Expertise">
+    <meta name="description" content="">
+    <meta name="page_type" content="np-template-header-footer-from-plugin">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}" media="screen">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nicepage.css') }}" media="screen">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/Home.css') }}" media="screen">
+    <script class="u-script" type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"
+            defer=""></script>
+    <script class="u-script" type="text/javascript" src="{{ url_for('static', filename='js/nicepage.js') }}"
+            defer=""></script>
+    <meta name="generator" content="Nicepage 4.7.1, nicepage.com">
+    <link id="u-theme-google-font" rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+    <link id="u-page-google-font" rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i">
+
+
+    <script type="application/ld+json">{
+        "@context": "http://schema.org",
+        "@type": "Organization",
+        "name": ""
+    }</script>
+    <meta name="theme-color" content="#323a56">
+    <meta property="og:title" content="Home">
+    <meta property="og:type" content="website">
 </head>
-<body>
-<form action="/login" method="post">
+<body data-home-page="Home.html" data-home-page-title="Home" class="u-body u-xl-mode">
+<header class="u-clearfix u-header u-header" id="sec-664a">
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <nav class="u-menu u-menu-dropdown u-offcanvas u-menu-1" data-responsive-from="XL">
+            <div class="menu-collapse" style="font-size: 1rem; letter-spacing: 0px; font-weight: 700;">
+                <a class="u-button-style u-custom-border u-custom-border-color u-custom-borders u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-top-bottom-menu-spacing u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base"
+                   href="#">
+                    <svg class="u-svg-link" viewBox="0 0 24 24">
+                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#menu-hamburger"></use>
+                    </svg>
+                    <svg class="u-svg-content" version="1.1" id="menu-hamburger" viewBox="0 0 16 16" x="0px" y="0px"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+                        <g>
+                            <rect y="1" width="16" height="2"></rect>
+                            <rect y="7" width="16" height="2"></rect>
+                            <rect y="13" width="16" height="2"></rect>
+                        </g>
+                    </svg>
+                </a>
+            </div>
+            <div class="u-custom-menu u-nav-container">
+                <ul class="u-nav u-spacing-20 u-unstyled u-nav-1">
+                    <li class="u-nav-item"><a
+                            class="u-button-style u-nav-link u-text-active-palette-2-base u-text-grey-90 u-text-hover-palette-2-base"
+                            href="/" style="padding: 10px;">Home</a>
+                    </li>
+                    <li class="u-nav-item"><a
+                            class="u-button-style u-nav-link u-text-active-palette-2-base u-text-grey-90 u-text-hover-palette-2-base"
+                            href="/login" style="padding: 10px;">Login</a>
+                    </li>
+                    <li class="u-nav-item"><a
+                            class="u-button-style u-nav-link u-text-active-palette-2-base u-text-grey-90 u-text-hover-palette-2-base"
+                            href="/users" style="padding: 10px;">Usuarios</a>
+                    </li>
+                    <li class="u-nav-item"><a
+                            class="u-button-style u-nav-link u-text-active-palette-2-base u-text-grey-90 u-text-hover-palette-2-base"
+                            href="/pages" style="padding: 10px;">Páginas</a>
+                    </li>
+                    <li class="u-nav-item"><a
+                            class="u-button-style u-nav-link u-text-active-palette-2-base u-text-grey-90 u-text-hover-palette-2-base"
+                            href="/vulnerabilities" style="padding: 10px;">Vulnerabilidades</a>
+                    </li>
+                    <li class="u-nav-item"><a
+                            class="u-button-style u-nav-link u-text-active-palette-2-base u-text-grey-90 u-text-hover-palette-2-base"
+                            href="/extra" style="padding: 10px;">extra</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="u-custom-menu u-nav-container-collapse">
+                <div class="u-black u-container-style u-inner-container-layout u-opacity u-opacity-95 u-sidenav">
+                    <div class="u-inner-container-layout u-sidenav-overflow">
+                        <div class="u-menu-close"></div>
+                        <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2">
+                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/">Home</a>
+                            </li>
+                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/login">Login</a>
+                            </li>
+                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/users">Usuarios</a>
+                            </li>
+                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/pages">Páginas</a>
+                            </li>
+                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/vulnerabilities">Vulnerabilidades</a>
+                            </li>
+                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/extra">Extra</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="u-black u-menu-overlay u-opacity u-opacity-70"></div>
+            </div>
+        </nav>
+    </div>
+</header>
+<section class="u-clearfix u-image u-shading u-section-1" id="sec-cd44" data-image-width="1280" data-image-height="853">
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <div class="u-clearfix u-expanded-width u-layout-wrap u-layout-wrap-1">
+                <form action="/login" method="post">
+                    <label class="form-label">USERNAME <input type="text"
+                                                              name="username"
+                                                              required
+                                                              maxlength="255">
 
-    <label class="form-label">Username <input type="text"
-                                              name="username"
-                                              required
-                                              maxlength="255">
+                    </label>
+                    <br>
+                    <label class="form-label">PASSWORD <input type="password"
+                                                              name="password"
+                                                              required>
 
-    </label>
-    </br>
-
-    <label class="form-label">Password <input type="password"
-                                              name="password"
-                                              required>
-
-    </label>
-    </br>
-    {{ error }}
-    <input class="button-action" type="submit" value="Login" id="login_button">
-    <input type="hidden" value="{{ redirection }}" name = "redirection">
-</form>
+                    </label>
+                    <br>
+                    <br>
+                    {{ error }}
+                    <input class="button-action" type="submit" value="LOGIN" id="login_button">
+                    <input type="hidden" value="{{ redirection }}" name = "redirection">
+                </form>
+            </a>
+        </div>
+        <h2 class="u-align-right u-text u-text-body-alt-color u-text-3">Your Future is Here</h2>
+        <p class="u-text u-text-body-alt-color u-text-4">What are you waiting for? Let's see those graphics.</p>
+    </div>
+</section>
+<footer class="u-align-center u-clearfix u-footer u-grey-80 u-footer" id="sec-72ea">
+    <div class="u-align-left u-clearfix u-sheet u-sheet-1"></div>
+</footer>
+<section class="u-backlink u-clearfix u-grey-80">
+    <a class="u-link" href="https://nicepage.com/website-templates" target="_blank">
+        <span>Website Templates</span>
+    </a>
+    <p class="u-text">
+        <span>created with</span>
+    </p>
+    <a class="u-link" href="https://nicepage.cloud" target="_blank">
+        <span>Website Builder</span>
+    </a>.
+</section>
 </body>
 </html>
